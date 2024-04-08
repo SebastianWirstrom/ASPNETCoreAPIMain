@@ -14,26 +14,17 @@ public class SubscribersController(DataContext context) : ControllerBase
 
     #region CREATE
     [HttpPost] // CREATE
-    public async Task<IActionResult> Create(string email)
+    public async Task<IActionResult> Subscribe(SubscriberEntity entity)
     {
-        if (!string.IsNullOrEmpty(email))
+        if (ModelState.IsValid)
         {
-            if (!await _context.Subscribers.AnyAsync(x => x.Email == email))
+            if (await _context.Subscribers.AnyAsync(x => x.Email == entity.Email))
             {
-                try
-                {
-                    var subscriberEntity = new SubscriberEntity { Email = email };
-                    _context.Subscribers.Add(subscriberEntity);
-                    await _context.SaveChangesAsync();
-
-                    return Created("", null);
-                }
-                catch
-                {
-                    return Problem("Unable to create subscriber.");
-                }
+                return Conflict();
             }
-            return Conflict("Subscriber already exists with the entered information.");
+            _context.Add(entity);
+            await _context.SaveChangesAsync();
+            return Ok();
         }
         return BadRequest();
     }
