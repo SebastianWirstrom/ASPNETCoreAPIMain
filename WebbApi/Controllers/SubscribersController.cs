@@ -73,10 +73,10 @@ public class SubscribersController(DataContext context) : ControllerBase
     #endregion
 
     #region DELETE
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteOne(int id)
+    [HttpDelete("{email}")]
+    public async Task<IActionResult> DeleteOne(string email)
     {
-        var subscriber = await _context.Subscribers.FirstOrDefaultAsync(x => x.Id == id);
+        var subscriber = await _context.Subscribers.FirstOrDefaultAsync(x => x.Email == email);
         if (subscriber != null)
         {
             _context.Subscribers.Remove(subscriber);
